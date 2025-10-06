@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign Up - Hydration & Wellness Reminder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="center-card">
+    <h1 class="app-title">💧 Create Account</h1>
+    <p class="small">Register a new account for the app.</p>
+    <label>Username</label>
+    <input id="username" type="text" placeholder="Choose a username">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="Choose a password">
+    <label>Confirm Password</label>
+    <input id="password2" type="password" placeholder="Confirm password">
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn" onclick="doSignup()">Create Account</button>
+      <button class="btn" style="background:#6c757d" onclick="location.href='login.html'">Back to Login</button>
+    </div>
+    <p id="msg" class="footer-note"></p>
+  </div>
+
+<script src="auth.js"></script>
+<script>
+function doSignup(){
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  const p2 = document.getElementById('password2').value;
+  const msg = document.getElementById('msg');
+  if(!u || !p){ msg.textContent = 'Enter username and password'; return; }
+  if(p !== p2){ msg.textContent = 'Passwords do not match'; return; }
+  const res = auth.signup(u,p);
+  if(res.ok){
+    msg.textContent = 'Account created. Redirecting to login...';
+    setTimeout(()=> { window.location.href='login.html'; }, 900);
+  } else {
+    msg.textContent = res.msg;
+  }
+}
+</script>
+</body>
+</html>

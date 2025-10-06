@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - Hydration & Wellness Reminder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="center-card">
+    <h1 class="app-title">💧 Hydration & Wellness Reminder</h1>
+    <p class="small">Welcome back — please login to continue.</p>
+    <label>Username</label>
+    <input id="username" type="text" placeholder="Enter username">
+    <label>Password</label>
+    <input id="password" type="password" placeholder="Enter password">
+    <div class="row" style="justify-content:space-between; align-items:center; margin-top:6px;">
+      <label class="row small"><input id="remember" type="checkbox" style="margin-right:8px;"> Remember Me</label>
+      <button class="link-btn" onclick="location.href='signup.html'">Create account</button>
+    </div>
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn" onclick="doLogin()">Login</button>
+      <button class="btn" style="background:#6c757d" onclick="demoFill()">Demo</button>
+    </div>
+    <p id="msg" class="footer-note"></p>
+  </div>
+
+<script src="auth.js"></script>
+<script>
+function doLogin(){
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value;
+  const remember = document.getElementById('remember').checked;
+  const res = auth.login(u,p,remember);
+  const msg = document.getElementById('msg');
+  if(res.ok){
+    msg.textContent = 'Login successful — redirecting...';
+    setTimeout(()=> { window.location.href = 'index.html'; }, 600);
+  } else {
+    msg.textContent = res.msg;
+  }
+}
+
+function demoFill(){
+  // create demo user if not exists then login
+  const users = JSON.parse(localStorage.getItem('hw_users')||'{}');
+  if(!users['demo']){
+    users['demo'] = 'demo123';
+    localStorage.setItem('hw_users', JSON.stringify(users));
+  }
+  document.getElementById('username').value='demo';
+  document.getElementById('password').value='demo123';
+  document.getElementById('remember').checked = true;
+  doLogin();
+}
+</script>
+</body>
+</html>

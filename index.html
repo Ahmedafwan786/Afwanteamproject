@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hydration & Wellness Reminder</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-header">
+    <h2>💧 Hydration & Wellness Reminder</h2>
+    <div>
+      <span id="userTag" style="margin-right:12px;"></span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div style="padding:18px;">
+    <div class="center-card" style="max-width:900px;">
+      <!-- main app content (same as before, condensed for space) -->
+      <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <div style="flex:1; min-width:260px;">
+          <h3>Hydration Tracker</h3>
+          <canvas id="hydrationChart" width="200" height="200"></canvas>
+          <p id="progress">Glasses Drank: 0 / 8</p>
+          <button class="btn" onclick="addGlass()">+ Add Glass</button>
+        </div>
+
+        <div style="flex:1; min-width:260px;">
+          <h3>Wellness Tip</h3>
+          <p id="tip">Click below for a wellness tip 🌿</p>
+          <button class="btn" onclick="showTip()">Get Tip</button>
+          <h3 style="margin-top:14px;">BMI Calculator</h3>
+          <input type="number" id="weight" placeholder="Weight (kg)"><br>
+          <input type="number" id="height" placeholder="Height (cm)"><br>
+          <button class="btn" onclick="calculateBMI()">Calculate BMI</button>
+          <p id="bmiResult"></p>
+        </div>
+      </div>
+
+      <hr style="border-color: rgba(255,255,255,0.06); margin:18px 0;">
+      <div style="display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <label for="interval">Reminder interval:</label>
+        <select id="interval">
+          <option value="60000">1 min</option>
+          <option value="300000" selected>5 min</option>
+          <option value="600000">10 min</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input id="customMinutes" type="number" placeholder="minutes" style="display:none; width:120px;">
+        <button id="reminderBtn" class="btn" onclick="toggleReminder()">Start Reminder</button>
+        <button class="btn" onclick="testReminder()">Test Reminder</button>
+      </div>
+
+      <div style="margin-top:14px; text-align:center;">
+        <h3>Team Members</h3>
+        <ul id="teamList" style="list-style:none; padding:0;"></ul>
+      </div>
+      <p class="footer-note" style="margin-top:12px;">Contact: <a href="mailto:yourname@example.com">yourname@example.com</a></p>
+    </div>
+  </div>
+
+<script src="auth.js"></script>
+<script>
+// ensure user is authenticated
+if(!auth.ensureAuth()) throw 'redirecting to login';
+
+// show current user
+document.getElementById('userTag').innerText = '👤 ' + auth.getCurrentUser();
+
+function doLogout(){ auth.logout(); }
+
+// app logic (simplified, same behavior as before)
+let glasses = 0, goal = 8, reminderInterval = null;
+const ctx = document.getElementById('hydrationChart');
+let hydrationChart = new Chart(ctx, { type:'doughnut', data:{ labels:['Drank','Remaining'], datasets:[{ data:[0,goal], backgroundColor:['#3498db','#ecf0f1'] }] }, options:{ cutout:'70%'} });
+
+function updateChart(){ hydrationChart.data.datasets[0].data=[glasses,goal-glasses]; hydrationChart.update(); }
+function addGlass(){ if(glasses<goal){ glasses++; document.getElementById('progress').innerText = `Glasses Drank: ${glasses} / ${goal}`; updateChart(); } else alert('Goal reached'); }
+function showTip(){ const tips=['Stand and stretch','Take 5 deep breaths','Roll shoulders','Do 10 squats','Drink water now 💧']; document.getElementById('tip').innerText = tips[Math.floor(Math.random()*tips.length)]; }
+function calculateBMI(){ const w=+document.getElementById('weight').value, h=+document.getElementById('height').value; if(w>0&&h>0){ const bmi=(w/((h/100)**2)).toFixed(2); document.getElementById('bmiResult').innerText='BMI: '+bmi; } else alert('enter values'); }
+
+// reminder logic
+function toggleCustomInput(){ const v=document.getElementById('interval').value; document.getElementById('customMinutes').style.display = (v==='custom'?'inline-block':'none'); }
+document.getElementById('interval').addEventListener('change', toggleCustomInput);
+
+function triggerReminder(){ let audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'); audio.play().catch(e=>console.log('audio blocked',e)); if('Notification' in window && Notification.permission==='granted'){ new Notification('Hydration Reminder',{ body:'Time to drink a glass of water! 💧' }); } else { alert('💧 Time to drink a glass of water!'); } }
+
+function startReminder(){
+  let interval = document.getElementById('interval').value;
+  if(interval==='custom'){ const cv = +document.getElementById('customMinutes').value; if(!cv||cv<=0){ alert('Enter custom minutes'); return; } interval = cv*60000; }
+  reminderInterval = setInterval(triggerReminder, +interval);
+  document.getElementById('reminderBtn').innerText='Stop Reminder';
+  alert('Reminder started');
+}
+function stopReminder(){ if(reminderInterval){ clearInterval(reminderInterval); reminderInterval=null; document.getElementById('reminderBtn').innerText='Start Reminder'; alert('Reminder stopped'); } }
+function toggleReminder(){ if(reminderInterval) stopReminder(); else {
+  if(Notification.permission==='granted') startReminder(); else if(Notification.permission!=='denied'){ Notification.requestPermission().then(p=>{ if(p==='granted') startReminder(); else alert('Enable notifications'); }); } else alert('Enable notifications'); } }
+function testReminder(){ triggerReminder(); }
+
+// populate team
+const team = ['Afwan Saad Ahmed','Aryan jeswal','Aryan Singh','Chanchal Kumar Sharma'];
+const tl = document.getElementById('teamList');
+team.forEach(n=>{ const li=document.createElement('li'); li.textContent='👤 '+n; tl.appendChild(li); });
+
+// register service worker (unchanged)
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').then(()=>console.log('sw registered')).catch(e=>console.log(e)); }); }
+
+</script>
+</body>
+</html>

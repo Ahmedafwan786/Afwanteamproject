@@ -1,0 +1,41 @@
+/* style.css - shared styles for login, signup, and app */
+:root{
+  --bg-img: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+  --accent: #3498db;
+  --accent-2: #00bfff;
+}
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  margin:0;
+  padding:0;
+  background-image: var(--bg-img);
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  min-height:100vh;
+}
+.center-card{
+  max-width:420px;
+  margin:70px auto;
+  background: rgba(0,0,0,0.6);
+  padding:22px;
+  border-radius:12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  animation: fadeIn 600ms ease both;
+}
+h1.app-title{ text-align:center; margin:0 0 10px; font-size:22px; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], select{
+  width:100%; padding:10px 12px; margin:8px 0; border-radius:8px; border:1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color:#fff; box-sizing:border-box;
+}
+label{ display:block; text-align:left; margin-top:8px; font-size:14px; color:#e8f6ff; }
+.btn{ display:inline-block; padding:10px 16px; border-radius:10px; border:0; cursor:pointer; background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff; font-weight:600; box-shadow: 0 6px 18px rgba(52,152,219,0.18); }
+.link-btn{ background:transparent; color:#fff; border:0; cursor:pointer; text-decoration:underline; }
+.row{ display:flex; gap:8px; align-items:center; }
+.small{ font-size:13px; color:#dfeffd; }
+.footer-note{ font-size:12px; color:#cfe9ff; margin-top:10px; text-align:center; }
+@keyframes fadeIn{ from{ transform: translateY(8px); opacity:0 } to { transform:none; opacity:1 } }
+.header{ width:100%; padding:12px 18px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box; }
+/* App specific small header */
+.app-header{ background: rgba(0,0,0,0.45); display:flex; justify-content:space-between; align-items:center; padding:10px 20px; border-bottom:1px solid rgba(255,255,255,0.04); }
+.app-header h2{ margin:0; font-size:18px; }
+.logout-btn{ background:#ff6b6b; padding:8px 12px; border-radius:8px; border:0; color:#fff; cursor:pointer; }
