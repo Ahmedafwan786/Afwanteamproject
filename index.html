@@ -86,7 +86,7 @@ function calculateBMI(){ const w=+document.getElementById('weight').value, h=+do
 function toggleCustomInput(){ const v=document.getElementById('interval').value; document.getElementById('customMinutes').style.display = (v==='custom'?'inline-block':'none'); }
 document.getElementById('interval').addEventListener('change', toggleCustomInput);
 
-function triggerReminder(){ let audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'); audio.play().catch(e=>console.log('audio blocked',e)); if('Notification' in window && Notification.permission==='granted'){ new Notification('Hydration Reminder',{ body:'Time to drink a glass of water! 💧' }); } else { alert('💧 Time to drink a glass of water!'); } }
+function triggerReminder(){ let audio = new Audio('https://actions.google.com/sounds/v1/alarms/spaceship_alarm.ogg'); audio.play().catch(e=>console.log('audio blocked',e)); if('Notification' in window && Notification.permission==='granted'){ new Notification('Hydration Reminder',{ body:'Time to drink a glass of water! 💧' }); } else { alert('💧 Time to drink a glass of water!'); } }
 
 function startReminder(){
   let interval = document.getElementById('interval').value;
